@@ -38,6 +38,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/schedule": "^4.0.0",
     "@nestjs/swagger": "^7.4.0",
+    "@scalar/nestjs-api-reference": "^0.3.5",
     "@coral-xyz/anchor": "^0.30.0",
     "@solana/web3.js": "^1.95.2",
     "@prisma/client": "^7.1.0",
