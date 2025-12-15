@@ -9,9 +9,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       throw new Error('DATABASE_URL is not set. Please configure it in your .env file.');
     }
 
-    super({
-      datasourceUrl,
-    });
+    // Datasource URL is provided via prisma.config.ts; no need to pass options here.
+    super();
   }
 
   async onModuleInit() {
