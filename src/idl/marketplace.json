@@ -1,0 +1,1286 @@
+{
+  "address": "G46EH6LskmJpBTvZNewSL4Xe5fkdbcdkMpRM8wQ9T3RH",
+  "metadata": {
+    "name": "marketplace",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Scrunchy Marketplace Program"
+  },
+  "instructions": [
+    {
+      "name": "cancel_listing",
+      "docs": [
+        "Cancel a listing"
+      ],
+      "discriminator": [
+        41,
+        183,
+        50,
+        232,
+        230,
+        233,
+        157,
+        70
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "listing",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "complete_rental",
+      "docs": [
+        "Complete a rental and distribute payments"
+      ],
+      "discriminator": [
+        179,
+        18,
+        175,
+        28,
+        208,
+        197,
+        89,
+        176
+      ],
+      "accounts": [
+        {
+          "name": "rental",
+          "writable": true
+        },
+        {
+          "name": "escrow_account",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "writable": true
+        },
+        {
+          "name": "treasury",
+          "writable": true
+        },
+        {
+          "name": "game_account",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "listing",
+          "writable": true
+        },
+        {
+          "name": "asset_stats",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  112,
+                  108,
+                  97,
+                  99,
+                  101,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_listing",
+      "docs": [
+        "Create a listing for an asset"
+      ],
+      "discriminator": [
+        18,
+        168,
+        45,
+        24,
+        191,
+        31,
+        117,
+        54
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "game_asset"
+        },
+        {
+          "name": "listing",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  105,
+                  115,
+                  116,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "game_asset"
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_account"
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  112,
+                  108,
+                  97,
+                  99,
+                  101,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "price_per_hour",
+          "type": "u64"
+        },
+        {
+          "name": "price_per_day",
+          "type": "u64"
+        },
+        {
+          "name": "max_rental_duration",
+          "type": "i64"
+        },
+        {
+          "name": "min_rental_duration",
+          "type": "i64"
+        },
+        {
+          "name": "auto_renewal",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "extend_rental",
+      "docs": [
+        "Extend rental duration"
+      ],
+      "discriminator": [
+        247,
+        232,
+        97,
+        140,
+        184,
+        14,
+        184,
+        224
+      ],
+      "accounts": [
+        {
+          "name": "renter",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "rental",
+          "writable": true
+        },
+        {
+          "name": "escrow_account",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "rental"
+              }
+            ]
+          }
+        },
+        {
+          "name": "listing"
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  112,
+                  108,
+                  97,
+                  99,
+                  101,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "additional_duration",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_marketplace",
+      "docs": [
+        "Initialize marketplace program"
+      ],
+      "discriminator": [
+        47,
+        81,
+        64,
+        0,
+        96,
+        56,
+        105,
+        7
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  112,
+                  108,
+                  97,
+                  99,
+                  101,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "platform_fee_bps",
+          "type": "u16"
+        },
+        {
+          "name": "treasury",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "rent_asset",
+      "docs": [
+        "Rent an asset"
+      ],
+      "discriminator": [
+        126,
+        249,
+        1,
+        44,
+        234,
+        50,
+        33,
+        215
+      ],
+      "accounts": [
+        {
+          "name": "renter",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "owner",
+          "writable": true
+        },
+        {
+          "name": "game_asset"
+        },
+        {
+          "name": "listing",
+          "writable": true
+        },
+        {
+          "name": "rental",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  110,
+                  116,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "listing.asset",
+                "account": "Listing"
+              },
+              {
+                "kind": "account",
+                "path": "renter"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "rental"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "rental"
+              }
+            ]
+          }
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  112,
+                  108,
+                  97,
+                  99,
+                  101,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "game_account",
+          "optional": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "duration",
+          "type": "i64"
+        },
+        {
+          "name": "game",
+          "type": {
+            "option": "pubkey"
+          }
+        }
+      ]
+    },
+    {
+      "name": "update_listing",
+      "docs": [
+        "Update listing parameters"
+      ],
+      "discriminator": [
+        192,
+        174,
+        210,
+        68,
+        116,
+        40,
+        242,
+        253
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "listing",
+          "writable": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  112,
+                  108,
+                  97,
+                  99,
+                  101,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "price_per_hour",
+          "type": {
+            "option": "u64"
+          }
+        },
+        {
+          "name": "price_per_day",
+          "type": {
+            "option": "u64"
+          }
+        },
+        {
+          "name": "max_rental_duration",
+          "type": {
+            "option": "i64"
+          }
+        },
+        {
+          "name": "is_available",
+          "type": {
+            "option": "bool"
+          }
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Escrow",
+      "discriminator": [
+        31,
+        213,
+        123,
+        187,
+        186,
+        22,
+        218,
+        155
+      ]
+    },
+    {
+      "name": "Listing",
+      "discriminator": [
+        218,
+        32,
+        50,
+        73,
+        43,
+        134,
+        26,
+        58
+      ]
+    },
+    {
+      "name": "MarketplaceConfig",
+      "discriminator": [
+        169,
+        22,
+        247,
+        131,
+        182,
+        200,
+        81,
+        124
+      ]
+    },
+    {
+      "name": "Rental",
+      "discriminator": [
+        121,
+        83,
+        229,
+        235,
+        73,
+        50,
+        143,
+        184
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "AssetRented",
+      "discriminator": [
+        56,
+        5,
+        206,
+        223,
+        167,
+        178,
+        25,
+        247
+      ]
+    },
+    {
+      "name": "ListingCancelled",
+      "discriminator": [
+        11,
+        46,
+        163,
+        10,
+        103,
+        80,
+        139,
+        194
+      ]
+    },
+    {
+      "name": "ListingCreated",
+      "discriminator": [
+        94,
+        164,
+        167,
+        255,
+        246,
+        186,
+        12,
+        96
+      ]
+    },
+    {
+      "name": "ListingUpdated",
+      "discriminator": [
+        190,
+        215,
+        199,
+        138,
+        255,
+        248,
+        98,
+        62
+      ]
+    },
+    {
+      "name": "MarketplaceInitialized",
+      "discriminator": [
+        22,
+        167,
+        42,
+        34,
+        172,
+        55,
+        155,
+        14
+      ]
+    },
+    {
+      "name": "RentalCompleted",
+      "discriminator": [
+        65,
+        182,
+        96,
+        248,
+        177,
+        212,
+        88,
+        124
+      ]
+    },
+    {
+      "name": "RentalExtended",
+      "discriminator": [
+        153,
+        32,
+        84,
+        40,
+        30,
+        35,
+        246,
+        79
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidFee",
+      "msg": "Invalid fee percentage"
+    },
+    {
+      "code": 6001,
+      "name": "MarketplacePaused",
+      "msg": "Marketplace is paused"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidPrice",
+      "msg": "Invalid price"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidDuration",
+      "msg": "Invalid duration"
+    },
+    {
+      "code": 6004,
+      "name": "Unauthorized",
+      "msg": "Unauthorized"
+    },
+    {
+      "code": 6005,
+      "name": "ListingNotAvailable",
+      "msg": "Listing not available"
+    },
+    {
+      "code": 6006,
+      "name": "RentalNotActive",
+      "msg": "Rental not active"
+    },
+    {
+      "code": 6007,
+      "name": "RentalStillActive",
+      "msg": "Rental still active"
+    },
+    {
+      "code": 6008,
+      "name": "EscrowAlreadyReleased",
+      "msg": "Escrow already released"
+    }
+  ],
+  "types": [
+    {
+      "name": "AssetRented",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "rental",
+            "type": "pubkey"
+          },
+          {
+            "name": "asset",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "renter",
+            "type": "pubkey"
+          },
+          {
+            "name": "price",
+            "type": "u64"
+          },
+          {
+            "name": "duration",
+            "type": "i64"
+          },
+          {
+            "name": "start_time",
+            "type": "i64"
+          },
+          {
+            "name": "end_time",
+            "type": "i64"
+          },
+          {
+            "name": "game",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Escrow",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "rental",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "owner_share",
+            "type": "u64"
+          },
+          {
+            "name": "platform_fee",
+            "type": "u64"
+          },
+          {
+            "name": "game_share",
+            "type": "u64"
+          },
+          {
+            "name": "is_released",
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Listing",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "price_per_hour",
+            "type": "u64"
+          },
+          {
+            "name": "price_per_day",
+            "type": "u64"
+          },
+          {
+            "name": "max_rental_duration",
+            "type": "i64"
+          },
+          {
+            "name": "min_rental_duration",
+            "type": "i64"
+          },
+          {
+            "name": "is_available",
+            "type": "bool"
+          },
+          {
+            "name": "auto_renewal",
+            "type": "bool"
+          },
+          {
+            "name": "total_rentals",
+            "type": "u64"
+          },
+          {
+            "name": "total_revenue",
+            "type": "u64"
+          },
+          {
+            "name": "listed_at",
+            "type": "i64"
+          },
+          {
+            "name": "updated_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ListingCancelled",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "listing",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ListingCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "listing",
+            "type": "pubkey"
+          },
+          {
+            "name": "asset",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "price_per_hour",
+            "type": "u64"
+          },
+          {
+            "name": "price_per_day",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ListingUpdated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "listing",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketplaceConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "treasury",
+            "type": "pubkey"
+          },
+          {
+            "name": "platform_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "min_rental_duration",
+            "type": "i64"
+          },
+          {
+            "name": "max_rental_duration",
+            "type": "i64"
+          },
+          {
+            "name": "listing_fee",
+            "type": "u64"
+          },
+          {
+            "name": "total_listings",
+            "type": "u64"
+          },
+          {
+            "name": "total_rentals",
+            "type": "u64"
+          },
+          {
+            "name": "total_volume",
+            "type": "u64"
+          },
+          {
+            "name": "is_paused",
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketplaceInitialized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "treasury",
+            "type": "pubkey"
+          },
+          {
+            "name": "platform_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Rental",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "renter",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "listing",
+            "type": "pubkey"
+          },
+          {
+            "name": "rental_price",
+            "type": "u64"
+          },
+          {
+            "name": "duration",
+            "type": "i64"
+          },
+          {
+            "name": "start_time",
+            "type": "i64"
+          },
+          {
+            "name": "end_time",
+            "type": "i64"
+          },
+          {
+            "name": "escrow",
+            "type": "pubkey"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "RentalStatus"
+              }
+            }
+          },
+          {
+            "name": "auto_renewed",
+            "type": "u8"
+          },
+          {
+            "name": "game",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RentalCompleted",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "rental",
+            "type": "pubkey"
+          },
+          {
+            "name": "asset",
+            "type": "pubkey"
+          },
+          {
+            "name": "renter",
+            "type": "pubkey"
+          },
+          {
+            "name": "actual_duration",
+            "type": "i64"
+          },
+          {
+            "name": "owner_payout",
+            "type": "u64"
+          },
+          {
+            "name": "platform_fee",
+            "type": "u64"
+          },
+          {
+            "name": "game_share",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RentalExtended",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "rental",
+            "type": "pubkey"
+          },
+          {
+            "name": "additional_duration",
+            "type": "i64"
+          },
+          {
+            "name": "new_end_time",
+            "type": "i64"
+          },
+          {
+            "name": "additional_cost",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RentalStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Completed"
+          },
+          {
+            "name": "Expired"
+          },
+          {
+            "name": "Cancelled"
+          }
+        ]
+      }
+    }
+  ]
+}

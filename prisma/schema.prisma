@@ -1,0 +1,500 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+// User Management
+model User {
+  id            String    @id @default(cuid())
+  walletAddress String    @unique
+  username      String?   @unique
+  email         String?   @unique
+  avatarUrl     String?
+  bio           String?
+  
+  // Relationships
+  ownedAssets   Asset[]   @relation("AssetOwner")
+  rentals       Rental[]
+  listings      Listing[]
+  games         Game[]
+  
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastSeenAt    DateTime?
+  
+  @@index([walletAddress])
+  @@index([username])
+}
+
+// Game Registration
+model Game {
+  id                String    @id @default(cuid())
+  gameId            String    @unique // On-chain game account pubkey
+  developerId        String
+  developer         User      @relation(fields: [developerId], references: [id])
+  
+  name              String
+  description       String
+  websiteUrl        String?
+  logoUrl           String?
+  apiKey            String    @unique // For SDK authentication
+  
+  // Configuration (JSONB for flexibility)
+  config            Json      @default("{}")
+  configVersion     String    @default("1.0.0")
+  
+  // Configuration
+  revenueShareBps   Int       @default(500) // 5%
+  supportedTypes    String[]  // JSON array of AssetType enums
+  
+  // Status
+  isActive          Boolean   @default(true)
+  isVerified        Boolean   @default(false)
+  
+  // Statistics
+  totalAssets       Int       @default(0)
+  totalRentals      Int       @default(0)
+  totalRevenue      BigInt    @default(0)
+  activeUsers       Int       @default(0)
+  
+  // Relationships
+  assets            Asset[]
+  rentals           Rental[]
+  apiKeys           GameApiKey[]
+  configHistory     GameConfigHistory[]
+  webhooks          GameWebhook[]
+  packageInstallations PackageInstallation[]
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  @@index([gameId])
+  @@index([apiKey])
+  @@index([developerId])
+}
+
+// Game API Keys
+model GameApiKey {
+  id                String    @id @default(cuid())
+  gameId            String
+  game              Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  keyHash           String    @unique
+  keyPrefix         String
+  environment       String    @default("production") // 'test' | 'production'
+  permissions       Json      @default("[]")
+  
+  rateLimitPerMinute Int      @default(300)
+  burstLimit        Int       @default(500)
+  
+  lastUsedAt        DateTime?
+  createdAt         DateTime  @default(now())
+  revokedAt         DateTime?
+  
+  @@index([gameId])
+  @@index([keyHash])
+}
+
+// Game Configuration History
+model GameConfigHistory {
+  id                String    @id @default(cuid())
+  gameId            String
+  game              Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  version           String
+  config            Json
+  changes           String[]
+  updatedBy         String?
+  updatedAt         DateTime  @default(now())
+  
+  @@unique([gameId, version])
+  @@index([gameId])
+}
+
+// Game Webhooks
+model GameWebhook {
+  id                String    @id @default(cuid())
+  gameId            String
+  game              Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  event             String
+  url               String
+  secret            String?
+  
+  isActive          Boolean   @default(true)
+  totalDeliveries   Int       @default(0)
+  failedDeliveries  Int       @default(0)
+  lastDeliveryAt    DateTime?
+  
+  createdAt         DateTime  @default(now())
+  
+  @@index([gameId])
+}
+
+// Asset Metadata (mirrors on-chain data with enhancements)
+model Asset {
+  id                String    @id @default(cuid())
+  assetId           String    @unique // On-chain asset account pubkey
+  mintAddress       String    @unique // NFT mint address
+  ownerId           String
+  owner             User      @relation("AssetOwner", fields: [ownerId], references: [id])
+  
+  // Basic Info
+  name              String
+  description       String?
+  imageUrl          String
+  metadataUri       String
+  
+  // Classification
+  assetType         AssetType
+  rarity            Rarity
+  
+  // Attributes (JSON fields)
+  baseAttributes    Json      @default("{}") // { "power": 50, "speed": 30 }
+  gameMappings      Json      @default("{}") // { "gameId1": { "damage": 100 }, "gameId2": {...} }
+  
+  // Rental Config
+  isRentable        Boolean   @default(true)
+  isTransferable    Boolean   @default(true)
+  pricePerHour      BigInt?
+  pricePerDay       BigInt?
+  maxRentalDuration Int?      // seconds
+  minRentalDuration Int?      // seconds
+  
+  // Status
+  isActive          Boolean   @default(true)
+  isListed          Boolean   @default(false)
+  currentlyRented   Boolean   @default(false)
+  
+  // Statistics
+  totalRentals      Int       @default(0)
+  totalRevenue      BigInt    @default(0)
+  totalUsageTime    Int       @default(0) // seconds
+  averageRating     Float?
+  
+  // Relationships
+  games             Game[]
+  listings          Listing[]
+  rentals           Rental[]
+  reviews           Review[]
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  lastSyncedAt      DateTime  @default(now())
+  
+  @@index([ownerId])
+  @@index([assetType, rarity])
+  @@index([isRentable, isListed])
+  @@index([mintAddress])
+}
+
+// Marketplace Listings
+model Listing {
+  id                String    @id @default(cuid())
+  listingId         String    @unique // On-chain listing account pubkey
+  assetId           String
+  asset             Asset     @relation(fields: [assetId], references: [id])
+  ownerId           String
+  owner             User      @relation(fields: [ownerId], references: [id])
+  
+  // Pricing
+  pricePerHour      BigInt
+  pricePerDay       BigInt
+  
+  // Rental Terms
+  maxRentalDuration Int       // seconds
+  minRentalDuration Int       // seconds
+  autoRenewal       Boolean   @default(false)
+  
+  // Status
+  isAvailable       Boolean   @default(true)
+  isActive          Boolean   @default(true)
+  
+  // Statistics
+  totalRentals      Int       @default(0)
+  totalRevenue      BigInt    @default(0)
+  views             Int       @default(0)
+  
+  // Relationships
+  rentals           Rental[]
+  
+  // Timestamps
+  listedAt          DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  @@index([assetId])
+  @@index([ownerId])
+  @@index([isAvailable, isActive])
+}
+
+// Rental Records
+model Rental {
+  id                String       @id @default(cuid())
+  rentalId          String       @unique // On-chain rental account pubkey
+  assetId           String
+  asset             Asset        @relation(fields: [assetId], references: [id])
+  listingId         String
+  listing           Listing      @relation(fields: [listingId], references: [id])
+  renterId          String
+  renter            User         @relation(fields: [renterId], references: [id])
+  gameId            String?
+  game              Game?        @relation(fields: [gameId], references: [id])
+  
+  // Terms
+  rentalPrice       BigInt       // Total paid
+  duration          Int          // seconds
+  
+  // Time
+  startTime         DateTime
+  endTime           DateTime
+  completedAt       DateTime?
+  
+  // Status
+  status            RentalStatus @default(ACTIVE)
+  autoRenewed       Int          @default(0)
+  
+  // Payment Distribution
+  ownerPayout       BigInt?
+  platformFee       BigInt?
+  gameShare         BigInt?
+  
+  // Usage Tracking
+  usageCount        Int          @default(0) // Number of times used in-game
+  lastUsedAt        DateTime?
+  
+  // Timestamps
+  createdAt         DateTime     @default(now())
+  
+  @@index([assetId])
+  @@index([renterId])
+  @@index([gameId])
+  @@index([status])
+  @@index([endTime])
+}
+
+// Reviews & Ratings
+model Review {
+  id          String   @id @default(cuid())
+  assetId     String
+  asset       Asset    @relation(fields: [assetId], references: [id])
+  reviewerId  String   // User wallet address (not FK to allow non-users)
+  
+  rating      Int      // 1-5 stars
+  comment     String?
+  
+  // Verification
+  verifiedRent Boolean @default(false) // Did they actually rent it?
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([assetId])
+  @@unique([assetId, reviewerId])
+}
+
+// Analytics Events
+model AnalyticsEvent {
+  id          String   @id @default(cuid())
+  eventType   String   // "asset_view", "listing_view", "rental_start", etc.
+  
+  // Context
+  userId      String?
+  assetId     String?
+  gameId      String?
+  
+  // Metadata
+  metadata    Json?    // Additional event-specific data
+  
+  // Session
+  sessionId   String?
+  ipAddress   String?
+  userAgent   String?
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([eventType])
+  @@index([userId])
+  @@index([assetId])
+  @@index([createdAt])
+}
+
+// Developer Marketplace Packages
+model MarketplacePackage {
+  id                String    @id @default(cuid())
+  packageId         String    @unique
+  
+  creatorId         String?   // Game developer who created it
+  
+  name              String
+  description       String?
+  tagline           String?
+  category          String?
+  tags              String[]
+  
+  type              String    // visual_pack, attribute_template, integration_kit, etc.
+  contentsUrl       String    // URL to package contents (S3/CDN)
+  contentsSize      BigInt?
+  
+  pricing           Json      // Pricing model configuration
+  licenseType       String
+  
+  thumbnailUrl      String?
+  screenshotUrls    String[]
+  demoVideoUrl      String?
+  
+  compatibility      Json      // Game engines, SDK versions, asset types
+  
+  downloads         Int       @default(0)
+  activeInstalls    Int       @default(0)
+  rating            Float?
+  reviewCount       Int       @default(0)
+  
+  version           String
+  changelog         Json?
+  
+  status            String    @default("draft") // draft, pending_review, approved, rejected, deprecated
+  featured          Boolean   @default(false)
+  
+  documentationUrl  String?
+  supportUrl        String?
+  sourceCodeUrl     String?
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  packageVersions   PackageVersion[]
+  installations     PackageInstallation[]
+  purchases         PackagePurchase[]
+  reviews           PackageReview[]
+  
+  @@index([type])
+  @@index([category])
+  @@index([creatorId])
+  @@index([featured])
+  @@index([rating])
+  @@index([downloads])
+}
+
+model PackageVersion {
+  id                String    @id @default(cuid())
+  packageId         String
+  package           MarketplacePackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  
+  version           String
+  releaseDate       DateTime  @default(now())
+  changelog         String[]
+  
+  isBreaking        Boolean   @default(false)
+  migrationGuide    String?
+  
+  minSdkVersion     String?
+  maxSdkVersion     String?
+  
+  downloadUrl       String
+  checksumMd5      String?
+  checksumSha256    String?
+  
+  @@unique([packageId, version])
+  @@index([packageId])
+}
+
+model PackageInstallation {
+  id                String    @id @default(cuid())
+  gameId            String
+  game              Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  packageId         String
+  package           MarketplacePackage @relation(fields: [packageId], references: [id])
+  
+  version           String
+  
+  installedAt       DateTime  @default(now())
+  lastUsedAt        DateTime?
+  
+  assetsUsed        Int       @default(0)
+  apiCalls          Int       @default(0)
+  
+  @@unique([gameId, packageId])
+  @@index([gameId])
+  @@index([packageId])
+}
+
+model PackagePurchase {
+  id                String    @id @default(cuid())
+  packageId         String
+  package           MarketplacePackage @relation(fields: [packageId], references: [id])
+  buyerGameId       String
+  
+  purchaseType      String    // one_time, subscription, etc.
+  amount            Decimal
+  currency          String
+  
+  transactionId     String?
+  
+  purchasedAt       DateTime  @default(now())
+  
+  subscriptionEndsAt DateTime?
+  autoRenew         Boolean   @default(true)
+  
+  @@index([packageId])
+  @@index([buyerGameId])
+}
+
+model PackageReview {
+  id                String    @id @default(cuid())
+  packageId         String
+  package           MarketplacePackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  userId            String    // Reviewer (game developer)
+  
+  rating            Int       // 1-5
+  title             String?
+  comment           String?
+  
+  verified          Boolean   @default(false)
+  
+  helpfulCount      Int       @default(0)
+  notHelpfulCount   Int       @default(0)
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  @@unique([packageId, userId])
+  @@index([packageId])
+  @@index([rating])
+}
+
+// Enums
+enum AssetType {
+  WEAPON
+  ARMOR
+  SKILL
+  POWERUP
+  CONSUMABLE
+  CHARACTER
+  VEHICLE
+  OTHER
+}
+
+enum Rarity {
+  COMMON
+  UNCOMMON
+  RARE
+  EPIC
+  LEGENDARY
+  MYTHIC
+}
+
+enum RentalStatus {
+  ACTIVE
+  COMPLETED
+  EXPIRED
+  CANCELLED
+}
+

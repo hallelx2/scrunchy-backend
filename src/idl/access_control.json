@@ -1,0 +1,358 @@
+{
+  "address": "n41USxoi9Lf1RyZUVAfCHD5TSeuDBuqDxEpUHzkDqf2",
+  "metadata": {
+    "name": "access_control",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Scrunchy Access Control Program"
+  },
+  "instructions": [
+    {
+      "name": "initialize_access_record",
+      "docs": [
+        "Initialize access record when asset is created"
+      ],
+      "discriminator": [
+        23,
+        24,
+        251,
+        22,
+        25,
+        75,
+        159,
+        95
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "access_record",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  99,
+                  99,
+                  101,
+                  115,
+                  115,
+                  95,
+                  114,
+                  101,
+                  99,
+                  111,
+                  114,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "game_asset"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "update_access_record",
+      "docs": [
+        "Update access record when rental starts/ends"
+      ],
+      "discriminator": [
+        93,
+        115,
+        111,
+        85,
+        100,
+        254,
+        201,
+        93
+      ],
+      "accounts": [
+        {
+          "name": "marketplace_program"
+        },
+        {
+          "name": "access_record",
+          "writable": true
+        },
+        {
+          "name": "rental",
+          "optional": true
+        }
+      ],
+      "args": [
+        {
+          "name": "active_rental",
+          "type": {
+            "option": {
+              "defined": {
+                "name": "ActiveRentalInfo"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "verify_access",
+      "docs": [
+        "Verify access for a wallet (read-only)"
+      ],
+      "discriminator": [
+        198,
+        35,
+        119,
+        166,
+        140,
+        214,
+        241,
+        222
+      ],
+      "accounts": [
+        {
+          "name": "access_record",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  99,
+                  99,
+                  101,
+                  115,
+                  115,
+                  95,
+                  114,
+                  101,
+                  99,
+                  111,
+                  114,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "access_record.mint",
+                "account": "AccessRecord"
+              }
+            ]
+          }
+        },
+        {
+          "name": "clock",
+          "address": "SysvarC1ock11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "wallet",
+          "type": "pubkey"
+        }
+      ],
+      "returns": {
+        "defined": {
+          "name": "AccessStatus"
+        }
+      }
+    }
+  ],
+  "accounts": [
+    {
+      "name": "AccessRecord",
+      "discriminator": [
+        224,
+        96,
+        239,
+        97,
+        225,
+        133,
+        153,
+        188
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "AccessRecordCreated",
+      "discriminator": [
+        85,
+        163,
+        167,
+        159,
+        10,
+        111,
+        207,
+        229
+      ]
+    },
+    {
+      "name": "AccessRecordUpdated",
+      "discriminator": [
+        116,
+        120,
+        63,
+        184,
+        124,
+        136,
+        108,
+        190
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "UnauthorizedProgram",
+      "msg": "Unauthorized program"
+    }
+  ],
+  "types": [
+    {
+      "name": "AccessRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "active_rental",
+            "type": {
+              "option": {
+                "defined": {
+                  "name": "ActiveRentalInfo"
+                }
+              }
+            }
+          },
+          {
+            "name": "last_verified",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AccessRecordCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "access_record",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AccessRecordUpdated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "access_record",
+            "type": "pubkey"
+          },
+          {
+            "name": "active_rental",
+            "type": {
+              "option": {
+                "defined": {
+                  "name": "ActiveRentalInfo"
+                }
+              }
+            }
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AccessStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Owner"
+          },
+          {
+            "name": "Rented",
+            "fields": [
+              {
+                "name": "expiry",
+                "type": "i64"
+              }
+            ]
+          },
+          {
+            "name": "NoAccess"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ActiveRentalInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "renter",
+            "type": "pubkey"
+          },
+          {
+            "name": "rental",
+            "type": "pubkey"
+          },
+          {
+            "name": "expiry",
+            "type": "i64"
+          }
+        ]
+      }
+    }
+  ]
+}

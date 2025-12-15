@@ -1,0 +1,1202 @@
+{
+  "address": "7vxpftgcdbh6NW77uAGVxp4aM2RcbQtmeGixNp2ifCDn",
+  "metadata": {
+    "name": "asset_registry",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Scrunchy Asset Registry Program"
+  },
+  "instructions": [
+    {
+      "name": "add_game_mapping",
+      "docs": [
+        "Add game mapping to asset"
+      ],
+      "discriminator": [
+        234,
+        136,
+        221,
+        88,
+        68,
+        128,
+        197,
+        238
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "game_asset",
+          "writable": true
+        },
+        {
+          "name": "registered_game",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  101,
+                  114,
+                  101,
+                  100,
+                  95,
+                  103,
+                  97,
+                  109,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "registered_game.authority",
+                "account": "RegisteredGame"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "game_id",
+          "type": "pubkey"
+        },
+        {
+          "name": "attributes",
+          "type": {
+            "vec": {
+              "defined": {
+                "name": "Attribute"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "create_asset",
+      "docs": [
+        "Create a new game asset as an NFT"
+      ],
+      "discriminator": [
+        28,
+        42,
+        120,
+        51,
+        7,
+        38,
+        156,
+        136
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "game_asset",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  109,
+                  101,
+                  95,
+                  97,
+                  115,
+                  115,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "game_asset"
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_account",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "treasury",
+          "writable": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "asset_type",
+          "type": {
+            "defined": {
+              "name": "AssetType"
+            }
+          }
+        },
+        {
+          "name": "rarity",
+          "type": {
+            "defined": {
+              "name": "Rarity"
+            }
+          }
+        },
+        {
+          "name": "metadata_uri",
+          "type": "string"
+        },
+        {
+          "name": "base_attributes",
+          "type": {
+            "vec": {
+              "defined": {
+                "name": "Attribute"
+              }
+            }
+          }
+        },
+        {
+          "name": "game_mappings",
+          "type": {
+            "vec": {
+              "defined": {
+                "name": "GameMapping"
+              }
+            }
+          }
+        },
+        {
+          "name": "rental_config",
+          "type": {
+            "option": {
+              "defined": {
+                "name": "RentalConfig"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "initialize",
+      "docs": [
+        "Initialize the asset registry program"
+      ],
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "register_game",
+      "docs": [
+        "Register a game for asset integration"
+      ],
+      "discriminator": [
+        122,
+        44,
+        95,
+        58,
+        89,
+        33,
+        40,
+        59
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "registered_game",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  101,
+                  114,
+                  101,
+                  100,
+                  95,
+                  103,
+                  97,
+                  109,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "supported_types",
+          "type": {
+            "vec": {
+              "defined": {
+                "name": "AssetType"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "transfer_asset",
+      "docs": [
+        "Transfer asset to new owner"
+      ],
+      "discriminator": [
+        126,
+        66,
+        109,
+        18,
+        60,
+        172,
+        131,
+        124
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "game_asset",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "from_token_account",
+          "writable": true
+        },
+        {
+          "name": "to_token_account",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "new_owner",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "update_asset",
+      "docs": [
+        "Update asset metadata"
+      ],
+      "discriminator": [
+        56,
+        126,
+        238,
+        138,
+        192,
+        118,
+        228,
+        172
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "game_asset",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_account"
+        }
+      ],
+      "args": [
+        {
+          "name": "metadata_uri",
+          "type": {
+            "option": "string"
+          }
+        },
+        {
+          "name": "base_attributes",
+          "type": {
+            "option": {
+              "vec": {
+                "defined": {
+                  "name": "Attribute"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "game_mappings",
+          "type": {
+            "option": {
+              "vec": {
+                "defined": {
+                  "name": "GameMapping"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "rental_config",
+          "type": {
+            "option": {
+              "defined": {
+                "name": "RentalConfig"
+              }
+            }
+          }
+        },
+        {
+          "name": "is_rentable",
+          "type": {
+            "option": "bool"
+          }
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "AssetStats",
+      "discriminator": [
+        44,
+        24,
+        137,
+        137,
+        250,
+        226,
+        23,
+        118
+      ]
+    },
+    {
+      "name": "GameAsset",
+      "discriminator": [
+        84,
+        251,
+        194,
+        66,
+        134,
+        47,
+        103,
+        43
+      ]
+    },
+    {
+      "name": "ProgramConfig",
+      "discriminator": [
+        196,
+        210,
+        90,
+        231,
+        144,
+        149,
+        140,
+        63
+      ]
+    },
+    {
+      "name": "RegisteredGame",
+      "discriminator": [
+        209,
+        213,
+        175,
+        152,
+        91,
+        241,
+        211,
+        126
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "AssetCreated",
+      "discriminator": [
+        206,
+        193,
+        252,
+        254,
+        207,
+        185,
+        154,
+        4
+      ]
+    },
+    {
+      "name": "AssetTransferred",
+      "discriminator": [
+        140,
+        41,
+        238,
+        26,
+        65,
+        135,
+        56,
+        36
+      ]
+    },
+    {
+      "name": "AssetUpdated",
+      "discriminator": [
+        205,
+        81,
+        132,
+        139,
+        249,
+        35,
+        249,
+        127
+      ]
+    },
+    {
+      "name": "GameMappingAdded",
+      "discriminator": [
+        253,
+        101,
+        107,
+        24,
+        104,
+        145,
+        11,
+        80
+      ]
+    },
+    {
+      "name": "GameRegistered",
+      "discriminator": [
+        2,
+        83,
+        36,
+        122,
+        249,
+        190,
+        106,
+        31
+      ]
+    },
+    {
+      "name": "ProgramInitialized",
+      "discriminator": [
+        43,
+        70,
+        110,
+        241,
+        199,
+        218,
+        221,
+        245
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidName",
+      "msg": "Invalid name length"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidDescription",
+      "msg": "Invalid description length"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidMetadataUri",
+      "msg": "Invalid metadata URI"
+    },
+    {
+      "code": 6003,
+      "name": "MaxAttributesExceeded",
+      "msg": "Maximum attributes exceeded"
+    },
+    {
+      "code": 6004,
+      "name": "MaxGameMappingsReached",
+      "msg": "Maximum game mappings reached"
+    },
+    {
+      "code": 6005,
+      "name": "Unauthorized",
+      "msg": "Unauthorized access"
+    },
+    {
+      "code": 6006,
+      "name": "AssetNotTransferable",
+      "msg": "Asset is not transferable"
+    },
+    {
+      "code": 6007,
+      "name": "GameNotActive",
+      "msg": "Game is not active"
+    },
+    {
+      "code": 6008,
+      "name": "GameMappingExists",
+      "msg": "Game mapping already exists"
+    },
+    {
+      "code": 6009,
+      "name": "AssetTypeNotSupported",
+      "msg": "Asset type not supported by game"
+    }
+  ],
+  "types": [
+    {
+      "name": "AssetCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "asset_type",
+            "type": {
+              "defined": {
+                "name": "AssetType"
+              }
+            }
+          },
+          {
+            "name": "rarity",
+            "type": {
+              "defined": {
+                "name": "Rarity"
+              }
+            }
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AssetStats",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset",
+            "type": "pubkey"
+          },
+          {
+            "name": "total_rentals",
+            "type": "u64"
+          },
+          {
+            "name": "total_revenue",
+            "type": "u64"
+          },
+          {
+            "name": "active_rentals",
+            "type": "u32"
+          },
+          {
+            "name": "total_usage_time",
+            "type": "i64"
+          },
+          {
+            "name": "games_used",
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "last_rental",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AssetTransferred",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset",
+            "type": "pubkey"
+          },
+          {
+            "name": "from",
+            "type": "pubkey"
+          },
+          {
+            "name": "to",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AssetType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Weapon"
+          },
+          {
+            "name": "Armor"
+          },
+          {
+            "name": "Skill"
+          },
+          {
+            "name": "PowerUp"
+          },
+          {
+            "name": "Consumable"
+          },
+          {
+            "name": "Character"
+          },
+          {
+            "name": "Vehicle"
+          },
+          {
+            "name": "Other"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AssetUpdated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Attribute",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "key",
+            "type": "string"
+          },
+          {
+            "name": "value",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GameAsset",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "metadata_uri",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "asset_type",
+            "type": {
+              "defined": {
+                "name": "AssetType"
+              }
+            }
+          },
+          {
+            "name": "rarity",
+            "type": {
+              "defined": {
+                "name": "Rarity"
+              }
+            }
+          },
+          {
+            "name": "base_attributes",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "Attribute"
+                }
+              }
+            }
+          },
+          {
+            "name": "game_mappings",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "GameMapping"
+                }
+              }
+            }
+          },
+          {
+            "name": "rental_config",
+            "type": {
+              "option": {
+                "defined": {
+                  "name": "RentalConfig"
+                }
+              }
+            }
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "updated_at",
+            "type": "i64"
+          },
+          {
+            "name": "is_rentable",
+            "type": "bool"
+          },
+          {
+            "name": "is_transferable",
+            "type": "bool"
+          },
+          {
+            "name": "is_active",
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GameMapping",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "game_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "attributes",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "Attribute"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "GameMappingAdded",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset",
+            "type": "pubkey"
+          },
+          {
+            "name": "game",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GameRegistered",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "game",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProgramConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "marketplace_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "creation_fee",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProgramInitialized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Rarity",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Common"
+          },
+          {
+            "name": "Uncommon"
+          },
+          {
+            "name": "Rare"
+          },
+          {
+            "name": "Epic"
+          },
+          {
+            "name": "Legendary"
+          },
+          {
+            "name": "Mythic"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RegisteredGame",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "api_key",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "supported_types",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "AssetType"
+                }
+              }
+            }
+          },
+          {
+            "name": "revenue_share_bps",
+            "type": "u16"
+          },
+          {
+            "name": "total_assets_used",
+            "type": "u64"
+          },
+          {
+            "name": "total_rentals",
+            "type": "u64"
+          },
+          {
+            "name": "is_active",
+            "type": "bool"
+          },
+          {
+            "name": "is_verified",
+            "type": "bool"
+          },
+          {
+            "name": "registered_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RentalConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "price_per_hour",
+            "type": "u64"
+          },
+          {
+            "name": "price_per_day",
+            "type": "u64"
+          },
+          {
+            "name": "max_rental_duration",
+            "type": "i64"
+          },
+          {
+            "name": "min_rental_duration",
+            "type": "i64"
+          },
+          {
+            "name": "auto_renewal",
+            "type": "bool"
+          }
+        ]
+      }
+    }
+  ]
+}
